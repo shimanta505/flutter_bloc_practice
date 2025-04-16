@@ -17,18 +17,19 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => CounterBlock(const CounterState(counter: 0)),
-      child: BlocProvider(
-        create: (_) => SwitchBloc(const SwitchStates(isSwitch: false)),
-        child: MaterialApp(
-          title: "counter app",
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-            useMaterial3: true,
-          ),
-          home: const SwitchScreen(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+            create: (_) => CounterBlock(const CounterState(counter: 0))),
+        BlocProvider(create: (_) => SwitchBloc(const SwitchStates())),
+      ],
+      child: MaterialApp(
+        title: "counter app",
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
         ),
+        home: const SwitchScreen(),
       ),
     );
   }
