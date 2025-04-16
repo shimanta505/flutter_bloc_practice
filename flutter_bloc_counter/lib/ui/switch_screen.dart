@@ -27,13 +27,45 @@ class _SwitchScreenState extends State<SwitchScreen> {
             children: [
               Text('Notification'),
               BlocBuilder<SwitchBloc, SwitchStates>(
-                  builder: (context, state) => Switch(
-                      value: state.isSwitch,
-                      onChanged: (value) {
-                        context.read<SwitchBloc>().add(EnableOrDisableSwitch());
-                      })),
+                  buildWhen: (previous, current) =>
+                      //it will check previous object switch value
+                      //and current switch value
+                      previous.isSwitch != current.isSwitch,
+                  builder: (context, state) {
+                    print("notification ");
+                    return Switch(
+                        value: state.isSwitch,
+                        onChanged: (value) {
+                          context
+                              .read<SwitchBloc>()
+                              .add(EnableOrDisableSwitch());
+                        });
+                  }),
             ],
-          )
+          ),
+          SizedBox(height: 10),
+          BlocBuilder<SwitchBloc, SwitchStates>(
+            buildWhen: (previous, current) =>
+                previous.isSwitch == current.isSwitch,
+            builder: (context, state) => Container(
+                height: 200,
+                color: Colors.red.withValues(alpha: state.sliderVal)),
+          ),
+          SizedBox(height: 10),
+          BlocBuilder<SwitchBloc, SwitchStates>(
+            buildWhen: (previous, current) =>
+                previous.isSwitch == current.isSwitch,
+            builder: (context, state) {
+              print('slider');
+              return Slider(
+                  value: state.sliderVal,
+                  onChanged: (val) {
+                    context
+                        .read<SwitchBloc>()
+                        .add(SliderValNotifier(slider: val));
+                  });
+            },
+          ),
         ],
       ),
     );

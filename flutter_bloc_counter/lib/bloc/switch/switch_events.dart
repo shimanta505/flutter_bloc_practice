@@ -9,3 +9,12 @@ abstract class SwitchEvents extends Equatable {
 }
 
 class EnableOrDisableSwitch extends SwitchEvents {}
+
+class SliderValNotifier extends SwitchEvents {
+  final double slider;
+  const SliderValNotifier({required this.slider});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [slider];
+}
