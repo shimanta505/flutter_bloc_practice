@@ -41,12 +41,14 @@ class _HomePageState extends State<HomePage>
     return Scaffold(
       body: Center(
         child: Transform(
-          transform: Matrix4.zero(),
+          alignment: Alignment.center,
+          transform: Matrix4.identity()..rotateZ(0.1),
           child: Container(
             height: 200,
             width: 200,
             decoration: BoxDecoration(
               color: Colors.blue,
+
               borderRadius: BorderRadius.circular(10),
             ),
           ),
