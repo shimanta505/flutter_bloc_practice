@@ -1,4 +1,4 @@
-import 'package:clippath_widget_bottom_nav/home_page.dart';
+import 'package:clippath_widget_bottom_nav/animate_builder_transform.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const HomePage(),
+      home: const AnimateBuilderTransform(),
     );
   }
 }
