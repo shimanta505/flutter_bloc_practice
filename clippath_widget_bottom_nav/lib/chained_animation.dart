@@ -65,7 +65,7 @@ class _ChainedAnimationState extends State<ChainedAnimation>
       if (status == AnimationStatus.completed) {
         _counterAnimation = Tween<double>(
           begin: _counterAnimation.value,
-          end: -pi, // or we can set as - 180
+          end: -(pi / 2) + _counterAnimation.value, // or we can set as - 180
         ).animate(
           CurvedAnimation(
             parent: _counterClockwiseAnimationController,
