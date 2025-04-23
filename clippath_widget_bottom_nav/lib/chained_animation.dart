@@ -9,10 +9,17 @@ class ChainedAnimation extends StatefulWidget {
   State<ChainedAnimation> createState() => _ChainedAnimationState();
 }
 
+extension on VoidCallback {
+  Future<void> delayed(Duration duration) => Future.delayed(duration, this);
+}
+
 class _ChainedAnimationState extends State<ChainedAnimation>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController _counterClockwiseAnimationController;
   late Animation<double> _counterAnimation;
+
+  late AnimationController _flipController;
+  late Animation<double> _flipAnimation;
 
   @override
   void initState() {
@@ -29,7 +36,47 @@ class _ChainedAnimationState extends State<ChainedAnimation>
         curve: Curves.bounceOut,
       ),
     );
-    // _counterClockwiseAnimationController.repeat();
+
+    _flipController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    );
+
+    _flipAnimation = Tween<double>(begin: 0, end: pi).animate(
+      CurvedAnimation(parent: _flipController, curve: Curves.bounceOut),
+    );
+
+    _counterClockwiseAnimationController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _flipAnimation = Tween<double>(
+          begin: _flipAnimation.value,
+          end: _flipAnimation.value + pi,
+        ).animate(
+          CurvedAnimation(parent: _flipController, curve: Curves.bounceOut),
+        );
+        _flipController
+          ..reset()
+          ..forward();
+      }
+    });
+
+    _flipController.addStatusListener((status) {
+      print(_counterAnimation.value);
+      if (status == AnimationStatus.completed) {
+        _counterAnimation = Tween<double>(
+          begin: _counterAnimation.value,
+          end: -pi, // or we can set as - 180
+        ).animate(
+          CurvedAnimation(
+            parent: _counterClockwiseAnimationController,
+            curve: Curves.bounceOut,
+          ),
+        );
+        _counterClockwiseAnimationController
+          ..reset()
+          ..forward();
+      }
+    });
     super.initState();
   }
 
@@ -37,11 +84,15 @@ class _ChainedAnimationState extends State<ChainedAnimation>
   void dispose() {
     // TODO: implement dispose
     _counterClockwiseAnimationController.dispose();
+    _flipController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    _counterClockwiseAnimationController
+      ..reset()
+      ..forward.delayed(Duration(seconds: 1));
     return Scaffold(
       body: SafeArea(
         child: AnimatedBuilder(
@@ -50,26 +101,51 @@ class _ChainedAnimationState extends State<ChainedAnimation>
             return Transform(
               alignment: Alignment.center,
               transform:
-                  Matrix4.identity()
-                    ..rotateZ(_counterClockwiseAnimationController.value),
+                  Matrix4.identity()..rotateZ(
+                    _counterAnimation.value,
+                  ), // how will bw the animation happen
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ClipPath(
-                    clipper: HalfCircleClipper(side: CircleSide.left),
-                    child: Container(
-                      height: 200,
-                      width: 200,
-                      color: Colors.blue,
-                    ),
+                  AnimatedBuilder(
+                    animation: _flipController,
+                    builder: (context, child) {
+                      return Transform(
+                        alignment: Alignment.centerRight,
+                        transform:
+                            Matrix4.identity()..rotateY(_flipAnimation.value),
+                        child: ClipPath(
+                          clipper: HalfCircleClipper(
+                            side: CircleSide.left,
+                          ), // make the widget for ui
+                          child: Container(
+                            height: 200,
+                            width: 200,
+                            color: Colors.blue,
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                  ClipPath(
-                    clipper: HalfCircleClipper(side: CircleSide.right),
-                    child: Container(
-                      height: 200,
-                      width: 200,
-                      color: Colors.yellow,
-                    ),
+                  AnimatedBuilder(
+                    animation: _flipController,
+                    builder: (context, child) {
+                      return Transform(
+                        alignment: Alignment.centerLeft,
+                        transform:
+                            Matrix4.identity()..rotateY(_flipAnimation.value),
+                        child: ClipPath(
+                          clipper: HalfCircleClipper(
+                            side: CircleSide.right,
+                          ), // make the widget for ui
+                          child: Container(
+                            height: 200,
+                            width: 200,
+                            color: Colors.yellow,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
