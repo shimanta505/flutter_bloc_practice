@@ -11,6 +11,7 @@ class _CustomBottomNavState extends State<CustomBottomNav>
     with SingleTickerProviderStateMixin {
   late AnimationController _curveAnimationController;
   late Animation<Offset> _animation;
+  late Animation<Offset> _prevAnimation;
 
   @override
   void initState() {
@@ -20,16 +21,29 @@ class _CustomBottomNavState extends State<CustomBottomNav>
       vsync: this,
       duration: Duration(seconds: 1),
     );
-    _animation = Tween<Offset>(begin: Offset.zero, end: Offset(5, 0)).animate(
+    _animation = Tween<Offset>(begin: Offset.zero, end: Offset(.9, 0)).animate(
+      CurvedAnimation(parent: _curveAnimationController, curve: Curves.linear),
+    );
+    _prevAnimation = Tween<Offset>(
+      begin: Offset.zero,
+      end: Offset(1.9, 0),
+    ).animate(
       CurvedAnimation(parent: _curveAnimationController, curve: Curves.linear),
     );
     super.initState();
   }
 
   setAnimation(double offsetPosition) {
+    var position = 2;
     _animation = Tween<Offset>(
       begin: _animation.value,
-      end: Offset(offsetPosition, 0),
+      end: Offset.fromDirection(0, offsetPosition),
+    ).animate(
+      CurvedAnimation(parent: _curveAnimationController, curve: Curves.linear),
+    );
+    _prevAnimation = Tween<Offset>(
+      begin: _prevAnimation.value,
+      end: Offset.fromDirection(0, offsetPosition + 1),
     ).animate(
       CurvedAnimation(parent: _curveAnimationController, curve: Curves.linear),
     );
@@ -58,31 +72,65 @@ class _CustomBottomNavState extends State<CustomBottomNav>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SlideTransition(
-                        position: _animation,
-                        child: ClipPath(
-                          clipper: HalfCircleClipper(
-                            position: CurvePosition.top,
+                      Row(
+                        children: [
+                          SlideTransition(
+                            position: _animation,
+                            child: ClipPath(
+                              clipper: HalfCircleClipper(
+                                position: CurvePosition.top,
+                              ),
+                              child: Container(
+                                height: 40,
+                                width: 60,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
-                          child: Container(
-                            height: 40,
-                            width: 60,
-                            color: Colors.white,
+                          SlideTransition(
+                            position: _prevAnimation,
+                            child: ClipPath(
+                              clipper: HalfCircleClipper(
+                                position: CurvePosition.top,
+                              ),
+                              child: Container(
+                                height: 40,
+                                width: 60,
+                                color: Colors.black,
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                      SlideTransition(
-                        position: _animation,
-                        child: ClipPath(
-                          clipper: HalfCircleClipper(
-                            position: CurvePosition.bottom,
+                      Row(
+                        children: [
+                          SlideTransition(
+                            position: _animation,
+                            child: ClipPath(
+                              clipper: HalfCircleClipper(
+                                position: CurvePosition.bottom,
+                              ),
+                              child: Container(
+                                height: 40,
+                                width: 60,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
-                          child: Container(
-                            height: 40,
-                            width: 60,
-                            color: Colors.white,
+                          SlideTransition(
+                            position: _prevAnimation,
+                            child: ClipPath(
+                              clipper: HalfCircleClipper(
+                                position: CurvePosition.bottom,
+                              ),
+                              child: Container(
+                                height: 40,
+                                width: 60,
+                                color: Colors.black,
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                     ],
                   );
@@ -99,7 +147,7 @@ class _CustomBottomNavState extends State<CustomBottomNav>
                   children: [
                     InkWell(
                       onTap: () {
-                        setAnimation(1);
+                        setAnimation(1.8);
                       },
                       child: Icon(Icons.home),
                     ),
@@ -135,19 +183,19 @@ extension ToPath on CurvePosition {
 
     switch (this) {
       case CurvePosition.top:
-        path.moveTo(10, 0);
+        path.moveTo(15, 0);
         offset = Offset(size.width, 0);
         clockWise = false;
         break;
       case CurvePosition.bottom:
-        path.moveTo(10, size.height);
+        path.moveTo(15, size.height);
         offset = Offset(size.width, size.height);
         clockWise = true;
         break;
     }
     path.arcToPoint(
       offset,
-      radius: Radius.elliptical(size.width / 2, size.height / 2),
+      radius: Radius.elliptical(size.width / 3, size.height / 2),
       clockwise: clockWise,
     );
     path.close();
