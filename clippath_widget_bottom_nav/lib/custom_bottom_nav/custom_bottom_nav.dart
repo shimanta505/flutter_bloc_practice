@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stylish_bottom_bar/stylish_bottom_bar.dart';
 
 class CustomBottomNav extends StatefulWidget {
   const CustomBottomNav({super.key});
@@ -12,6 +13,7 @@ class _CustomBottomNavState extends State<CustomBottomNav>
   late AnimationController _curveAnimationController;
   late Animation<Offset> _animation;
   late Animation<Offset> _prevAnimation;
+  late StylishBottomBar bottomNavigationBar;
 
   @override
   void initState() {
@@ -34,16 +36,41 @@ class _CustomBottomNavState extends State<CustomBottomNav>
   }
 
   setAnimation(double offsetPosition) {
-    var position = 2;
+    var position = offsetPosition;
+    Offset frontOffset = Offset(0, 0);
+    Offset backOffset = Offset(0, 0);
+
+    switch (position) {
+      case 1:
+        frontOffset = Offset(-0.3, 0);
+        backOffset = Offset(.3, 0);
+        break;
+      case 2:
+        frontOffset = Offset(0.6, 0);
+        backOffset = Offset(1.1, 0);
+        break;
+      case 3:
+        frontOffset = Offset(2, 0);
+        backOffset = Offset(2.5, 0);
+        break;
+      case 4:
+        frontOffset = Offset(3.4, 0);
+        backOffset = Offset(3.9, 0);
+        break;
+      case 5:
+        frontOffset = Offset(4.7, 0);
+        backOffset = Offset(4.9, 0);
+        break;
+    }
     _animation = Tween<Offset>(
       begin: _animation.value,
-      end: Offset.fromDirection(0, offsetPosition),
+      end: frontOffset,
     ).animate(
       CurvedAnimation(parent: _curveAnimationController, curve: Curves.linear),
     );
     _prevAnimation = Tween<Offset>(
       begin: _prevAnimation.value,
-      end: Offset.fromDirection(0, offsetPosition + 1),
+      end: backOffset,
     ).animate(
       CurvedAnimation(parent: _curveAnimationController, curve: Curves.linear),
     );
@@ -147,20 +174,35 @@ class _CustomBottomNavState extends State<CustomBottomNav>
                   children: [
                     InkWell(
                       onTap: () {
-                        setAnimation(1.8);
+                        setAnimation(1);
                       },
                       child: Icon(Icons.home),
                     ),
 
-                    Icon(Icons.home),
-                    Icon(Icons.favorite),
+                    InkWell(
+                      onTap: () {
+                        setAnimation(2);
+                      },
+                      child: Icon(Icons.home),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        setAnimation(3);
+                      },
+                      child: Icon(Icons.favorite),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        setAnimation(4);
+                      },
+                      child: Icon(Icons.person),
+                    ),
                     InkWell(
                       onTap: () {
                         setAnimation(5);
                       },
                       child: Icon(Icons.person),
                     ),
-                    Icon(Icons.person),
                   ],
                 ),
               ),
@@ -183,21 +225,35 @@ extension ToPath on CurvePosition {
 
     switch (this) {
       case CurvePosition.top:
-        path.moveTo(15, 0);
-        offset = Offset(size.width, 0);
+        path.moveTo(0, size.height / 2);
+        // offset = Offset(size.width, 0);
         clockWise = false;
         break;
       case CurvePosition.bottom:
-        path.moveTo(15, size.height);
+        path.moveTo(0, size.height);
         offset = Offset(size.width, size.height);
         clockWise = true;
         break;
     }
-    path.arcToPoint(
-      offset,
-      radius: Radius.elliptical(size.width / 3, size.height / 2),
-      clockwise: clockWise,
+    path.quadraticBezierTo(
+      size.width / 2,
+      size.height,
+      size.width,
+      size.height / 2,
     );
+    // path.arcToPoint(
+    //   offset,
+    //   radius: Radius.elliptical((size.width / 2) - 0, size.height / 2),
+    //   // radius: Radius.circular(size.width - ((size.width / 2) + 10)),
+    //   clockwise: clockWise,
+    //   rotation: 1,
+    // );
+    // path.relativeArcToPoint(
+    //   offset,
+    //   radius: Radius.elliptical((size.width / 2) - 0, size.height / 2),
+    //   clockwise: clockWise,
+    //   rotation: 1.5,
+    // );
     path.close();
     return path;
   }
