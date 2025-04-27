@@ -223,24 +223,41 @@ extension ToPath on CurvePosition {
     late Offset offset;
     late bool clockWise;
 
+    Offset firstControlPoint;
+    Offset firstEndPoint;
+
     switch (this) {
       case CurvePosition.top:
-        path.moveTo(0, size.height / 2);
-        // offset = Offset(size.width, 0);
+        path.moveTo(size.width, 0);
+        // path.quadraticBezierTo(
+        //   size.width,
+        //   size.height,
+        //   size.width * .5,
+        //   size.height * 0.3,
+        // );
         clockWise = false;
+
         break;
       case CurvePosition.bottom:
         path.moveTo(0, size.height);
-        offset = Offset(size.width, size.height);
+
+        path.quadraticBezierTo(
+          size.width * .5,
+          size.height * 0.3,
+          size.width,
+          size.height,
+        );
         clockWise = true;
+
         break;
     }
     path.quadraticBezierTo(
-      size.width / 2,
-      size.height,
+      size.width * .5,
+      size.height * 0.3,
       size.width,
-      size.height / 2,
+      size.height,
     );
+
     // path.arcToPoint(
     //   offset,
     //   radius: Radius.elliptical((size.width / 2) - 0, size.height / 2),
