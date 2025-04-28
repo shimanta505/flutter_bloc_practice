@@ -46,20 +46,20 @@ class _CustomBottomNavState extends State<CustomBottomNav>
         backOffset = Offset(.3, 0);
         break;
       case 2:
-        frontOffset = Offset(0.6, 0);
-        backOffset = Offset(1.1, 0);
+        frontOffset = Offset(.8, 0);
+        backOffset = Offset(1.4, 0);
         break;
       case 3:
-        frontOffset = Offset(2, 0);
-        backOffset = Offset(2.5, 0);
+        frontOffset = Offset(1.4, 0);
+        backOffset = Offset(2, 0);
         break;
       case 4:
-        frontOffset = Offset(3.4, 0);
-        backOffset = Offset(3.9, 0);
+        frontOffset = Offset(2, 0);
+        backOffset = Offset(2.6, 0);
         break;
       case 5:
-        frontOffset = Offset(4.7, 0);
-        backOffset = Offset(4.9, 0);
+        frontOffset = Offset(2.6, 0);
+        backOffset = Offset(3.2, 0);
         break;
     }
     _animation = Tween<Offset>(
@@ -84,7 +84,7 @@ class _CustomBottomNavState extends State<CustomBottomNav>
     return Scaffold(
       body: Center(
         child: Container(
-          height: 100,
+          height: 80,
           width: 400,
           decoration: BoxDecoration(
             color: Colors.grey,
@@ -109,7 +109,7 @@ class _CustomBottomNavState extends State<CustomBottomNav>
                               ),
                               child: Container(
                                 height: 40,
-                                width: 60,
+                                width: 80,
                                 color: Colors.white,
                               ),
                             ),
@@ -122,8 +122,8 @@ class _CustomBottomNavState extends State<CustomBottomNav>
                               ),
                               child: Container(
                                 height: 40,
-                                width: 60,
-                                color: Colors.black,
+                                width: 80,
+                                color: Colors.white,
                               ),
                             ),
                           ),
@@ -139,7 +139,7 @@ class _CustomBottomNavState extends State<CustomBottomNav>
                               ),
                               child: Container(
                                 height: 40,
-                                width: 60,
+                                width: 80,
                                 color: Colors.white,
                               ),
                             ),
@@ -152,8 +152,8 @@ class _CustomBottomNavState extends State<CustomBottomNav>
                               ),
                               child: Container(
                                 height: 40,
-                                width: 60,
-                                color: Colors.black,
+                                width: 80,
+                                color: Colors.white,
                               ),
                             ),
                           ),
@@ -226,20 +226,21 @@ extension ToPath on CurvePosition {
     Offset firstControlPoint;
     Offset firstEndPoint;
 
+    var width = size.width;
+    var height = size.height;
+
     switch (this) {
       case CurvePosition.top:
-        path.moveTo(size.width, 0);
-        // path.quadraticBezierTo(
-        //   size.width,
-        //   size.height,
-        //   size.width * .5,
-        //   size.height * 0.3,
-        // );
+        path.moveTo(0, 0);
+        path.conicTo(width, height * 1.5, width * 1, -height / 2, .5);
         clockWise = false;
 
         break;
       case CurvePosition.bottom:
         path.moveTo(0, size.height);
+
+        // path.conicTo(0, 0, 0, height / 2, width);
+        // path.conicTo(width * .7, -height * .5, width * 1, height / 1, .5);
 
         path.quadraticBezierTo(
           size.width * .5,
@@ -251,12 +252,12 @@ extension ToPath on CurvePosition {
 
         break;
     }
-    path.quadraticBezierTo(
-      size.width * .5,
-      size.height * 0.3,
-      size.width,
-      size.height,
-    );
+    // path.quadraticBezierTo(
+    //   size.width * .5,
+    //   size.height * 0.3,
+    //   size.width,
+    //   size.height,
+    // );
 
     // path.arcToPoint(
     //   offset,
